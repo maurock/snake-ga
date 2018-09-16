@@ -2,7 +2,7 @@
 import pygame
 from keras.models import Sequential,Model
 from keras.layers.core import Flatten, Dense, Dropout
-from keras.optimizers import RMSprop
+from keras.optimizers import RMSprop, Adam
 import random
 import numpy as np
 import pandas as pd
@@ -28,11 +28,12 @@ class DQNAgent(object):
         self.short_memory = np.array([])
         self.agent_target = 1
         self.agent_predict = 0
+        self.learning_rate = 0.001
         self.model = self.network()
-        #self.model = self.network("weights.hdf5")
-        self.epsilon = 3
+        #self.model = self.network("weights_new.hdf5")
+        self.epsilon = 2
         self.actual = []
-
+        self.memory = []
 
 
     def get_state(self, game, player, food):
@@ -63,8 +64,8 @@ class DQNAgent(object):
         return np.asarray(state)
 
 
-    def set_reward(self, game, player, food):
-        if game.crash:
+    def set_reward(self, game, player, food, crash):
+        if crash:
             self.reward = -10
             return self.reward
         if player.eaten:
@@ -118,10 +119,10 @@ class DQNAgent(object):
 
     def network(self,weights=None):
         model = Sequential()
-        model.add(Dense(output_dim=50, activation='relu', input_dim=17))
+        model.add(Dense(output_dim=50, activation='relu', input_dim=16))
         model.add(Dense(output_dim=50, activation='relu'))
-        model.add(Dense(output_dim=1, activation='softmax'))
-        opt = RMSprop(lr=0.025)
+        model.add(Dense(output_dim=3, activation='softmax'))
+        opt = Adam(self.learning_rate)
         model.compile(loss='mse', optimizer=opt)
 
         if weights:
@@ -159,13 +160,13 @@ class DQNAgent(object):
 
 
     def initialize_dataframe(self):
-        state = [0]*16
-        for i in range(16):
+        state = [0]*12
+        for i in range(12):
             state[i]= random.choice([0, 1])
         move = random.randint(1,4)
         reward = random.choice([-1, -10, 10])
-        future_state = [0]*16
-        for i in range(16):
+        future_state = [0]*12
+        for i in range(12):
             future_state[i] = random.choice([True, False])
         Q = 1
         array = [state, move, reward, future_state, Q]
@@ -175,28 +176,25 @@ class DQNAgent(object):
         self.short_memory = np.hstack(np.array([state, action, q]))
         #print(self.short_memory)
 
+    def remember(self, state, action, reward, next_state, done):
+        self.memory.append((state, action, reward, next_state, done))
 
+    def replay_new(self, memory):
+        if len(memory)>1500:
+            minibatch = random.sample(memory, 1000)
+        else:
+            minibatch = memory
+        for state, action, reward, next_state, done in minibatch:
+            target = reward
+            if not done:
+              target = reward + self.gamma * np.amax(self.model.predict(next_state.reshape((1, 16)))[0])
+            #print('TARGET', target)
+            target_f = self.model.predict(state.reshape((1, 16)))
+            #print('TARGET_F', target_f)
+            target_f[0][np.argmax(action)] = target
+            #print('TARGET_F_AFTER', target_f)
+            self.model.fit(state.reshape((1,16)), target_f, epochs=1, verbose=0)
 
-
-
-'''
-def run():
-    pygame.init()
-    while True:
-        game = Game(400, 400)
-        player1 = game.player
-        food1 = game.food
-        display(player1, food1, game)
-        initial_move(player1,game,food1)
-        display(player1, food1, game)
-        pygame.time.wait(game.speed)
-        while not game.crash:
-            loop(player1, food1, game)
-            display(player1, food1, game)
-            pygame.time.wait(game.speed)
-
-run()
-'''
 
 
 

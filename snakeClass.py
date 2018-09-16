@@ -3,7 +3,12 @@ from random import randint
 from DQN import DQNAgent
 import numpy as np
 import copy
-
+import os
+from sklearn.preprocessing import OneHotEncoder
+import pandas as pd
+from keras.utils import to_categorical
+import matplotlib.pyplot as plt
+from sklearn import linear_model
 
 class Game:
 
@@ -15,7 +20,8 @@ class Game:
         self.crash = False
         self.player = Player(self)
         self.food = Food(self, self.player)
-        self.speed = 1
+        self.speed = 50
+        self.score = 0
 
 
 class Player(object):
@@ -41,21 +47,25 @@ class Player(object):
             self.position[-1][0] = x
             self.position[-1][1] = y
 
+    # categorical_array = [straight, right, left]
     def do_move(self, move, x, y, game, food,agent):
         move_array = [self.x_change, self.y_change]
 
         if self.eaten:
+
             self.position.append([self.x, self.y])
             self.eaten = False
             self.food = self.food + 1
-        if move == 0 and self.x_change == 0:  # left
-            move_array = [-20, 0]
-        elif move == 1 and self.x_change == 0:  # right
-            move_array = [20, 0]
-        elif move == 2 and self.y_change == 0:  # top
-            move_array = [0, -20]
-        elif move == 3 and self.y_change == 0:  # bottom
-            move_array = [0, 20]
+        if np.array_equal(move ,[1, 0, 0]):
+            move_array = self.x_change, self.y_change
+        elif np.array_equal(move,[0, 1, 0]) and self.y_change == 0:  # right - going horizontal
+            move_array = [0, self.x_change]
+        elif np.array_equal(move,[0, 1, 0]) and self.x_change == 0:  # right - going vertical
+            move_array = [-self.y_change, 0]
+        elif np.array_equal(move, [0, 0, 1]) and self.y_change == 0:  # left - going horizontal
+            move_array = [0, -self.x_change]
+        elif np.array_equal(move,[0, 0, 1]) and self.x_change == 0:  # left - going vertical
+            move_array = [self.y_change, 0]
         self.x_change, self.y_change = move_array
         self.x = x + self.x_change
         self.y = y + self.y_change
@@ -107,6 +117,7 @@ def eat(player, food, game):
     if player.x == food.x_food and player.y == food.y_food:
         food.food_coord(game, player)
         player.eaten = True
+        game.score = game.score + 1
 
 
 def display(player, food, game):
@@ -158,178 +169,58 @@ def initial_move(player, game, food,agent):
 
 
 def run():
-pygame.init()
-agent = DQNAgent()
-counter_games = 0
-while counter_games < 10:
-    #Initialize game
-    game = Game(400, 400)
-    player1 = game.player
-    food1 = game.food
-    #agent.reward = 0
-    #Initialize storage to train first network
-    state1 = agent.get_state(game,player1,food1)
-    action = 1
-    agent.store_memory(state1, action, 1)
-    agent.dataframe = agent.dataframe.append([np.hstack(np.array([state1, action, 1]))])
-    # agent.dataframe = agent.dataframe.append([np.hstack(np.array([state1, 2, 3]))])
-    # agent.dataframe = agent.dataframe.append([np.hstack(np.array([state1, 3, 5]))])
-    agent.train2_q(agent.dataframe[agent.dataframe.columns[:17]], agent.dataframe[agent.dataframe.columns[17]])
-    #Performn first move
-    display(player1, food1, game)
-    initial_move(player1, game, food1,agent)
-    display(player1, food1, game)
-    while not game.crash:
-        state2 = agent.get_state(game,player1,food1)
-        agent.actual = copy.deepcopy([player1.position, player1.x, player1.y, player1.x_change, player1.y_change, food1.x_food,
-                   food1.y_food,game.crash, player1.eaten, player1.food])
-        primary_q_array = []
-        if randint(0,10)<agent.epsilon:
-            final_move=randint(0,3)
-        else:
-            for i in agent.possible_moves(player1):
-                player1.eaten = False
-                player1.do_move(i, player1.x, player1.y, game, food1,agent)
-                if game.crash==True:
-                    primary_q_array.append(agent.set_reward(game,player1, food1))
-                else:
-                    primary_q = agent.predict_q(agent.model, state2, i)
-                    primary_q_array.append(primary_q)
-                agent.replay(game,player1,food1,agent.actual)
-            predicted_q =max(primary_q_array)
-            max_index = primary_q_array.index(predicted_q)
-            final_move = agent.possible_moves(player1)[max_index]
-        player1.do_move(final_move, player1.x, player1.y, game, food1,agent)
-        temp_reward = agent.reward + agent.set_reward(game, player1, food1)
-        print('REWARD: ', temp_reward)
-        temp_state = agent.get_state(game, player1, food1)
-        agent.actual = copy.deepcopy([player1.position, player1.x, player1.y, player1.x_change, player1.y_change, food1.x_food,
-                   food1.y_food,game.crash, player1.eaten, player1.food])
-        secondary_q_array = []
-
-        if not game.crash:
-            for j in agent.possible_moves(player1):
-                player1.eaten = False
-                player1.do_move(j, player1.x, player1.y, game, food1, agent)
-
-                if game.crash == True:
-                    secondary_q_array.append(agent.reward)
-                    print('CRASH', secondary_q_array)
-
-                else:
-
-                    secondary_q = agent.predict_q(agent.model, temp_state, j)
-                    secondary_q_array.append(secondary_q)
-                agent.replay(game, player1, food1, agent.actual)
-            max_target_q = max(secondary_q_array)
-            target_q = [temp_reward + agent.gamma * max_target_q]
-            print('1', target_q)
-
-        else:
-            target_q = temp_reward
-            print('2', target_q)
-        #agent.agent_target = target_q
-        #agent.agent_predict = predicted_q
-        #agent.store_memory(state2, final_move, target_q[0])
-        print('3', state2)
-        print('3', final_move)
-        print('3', target_q[0])
-        print('3', [np.hstack(np.array([state2, final_move, target_q[0][0]]))])
-        agent.dataframe = agent.dataframe.append([np.hstack(np.array([state2, final_move, target_q[0][0]]))])
-        agent.train2_q(agent.dataframe[agent.dataframe.columns[:17]], agent.dataframe[agent.dataframe.columns[17]])
-        display(player1, food1, game)
-        pygame.time.wait(game.speed)
-    print('GAME: ',counter_games)
-    counter_games = counter_games + 1
-
-agent.model.save_weights('weights.hdf5')
+    pygame.init()
+    agent = DQNAgent()
+    counter_games = 0
+    score_plot = []
+    counter_plot =[]
+    while counter_games < 100:
+        #Initialize game
+        game = Game(400, 400)
+        player1 = game.player
+        food1 = game.food
+        #agent.reward = 0
+        #Initialize storage to train first network
+        state_init1 = agent.get_state(game,player1,food1)    #[0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0]
+        action = [1, 0, 0]
+        player1.do_move(action, player1.x, player1.y, game, food1, agent)
+        state_init2 = agent.get_state(game, player1, food1)
+        reward1 = agent.set_reward(game,player1,food1,game.crash)
+        agent.remember(state_init1,action, reward1, state_init2, game.crash)
+        agent.replay_new(agent.memory)
+        #Performn first move
+        #display(player1, food1, game)
+        while not game.crash:
+            if counter_games < 15:
+                agent.epsilon = 3
+            elif counter_games < 30:
+                agent.epsilon = 2
+            elif counter_games >= 30:
+                agent.epsilon = 0
+            state_old = agent.get_state(game, player1, food1)
+            if randint(0, 10) < agent.epsilon:
+                final_move = to_categorical(randint(0, 2), num_classes=3)[0]
+            else:
+                prediction = agent.model.predict(state_old.reshape((1,16)))
+                final_move = to_categorical(np.argmax(prediction[0]), num_classes=3)[0]
+            player1.do_move(final_move, player1.x, player1.y, game, food1, agent)
+            state_new = agent.get_state(game, player1, food1)
+            reward = agent.set_reward(game, player1, food1, game.crash)
+            agent.remember(state_old, final_move, reward, state_new, game.crash)
+            #display(player1, food1, game)
+            #pygame.time.wait(game.speed)
 
 
+        agent.replay_new(agent.memory)
+        counter_games += 1
+        print('Game', counter_games, '      Score:', game.score)
+        score_plot.append(game.score)
+        counter_plot.append(counter_games)
+    agent.model.save_weights('weights_new2.hdf5')
 
-# pygame.init()
-# agent = DQNAgent()
-# counter_games = 0
-# while counter_games < 10:
-#     #Initialize game
-#     game = Game(400, 400)
-#     player1 = game.player
-#     food1 = game.food
-#     agent.reward = 0
-#     #Initialize storage to train first network
-#     state1 = agent.get_state(game,player1,food1)
-#     action = 1
-#     agent.store_memory(state1, action, 1)
-#     agent.dataframe = agent.dataframe.append([np.hstack(np.array([state1, action, 1]))])
-#     # agent.dataframe = agent.dataframe.append([np.hstack(np.array([state1, 2, 3]))])
-#     # agent.dataframe = agent.dataframe.append([np.hstack(np.array([state1, 3, 5]))])
-#     agent.train2_q(agent.dataframe[agent.dataframe.columns[:17]], agent.dataframe[agent.dataframe.columns[17]])
-#     #Performn first move
-#     display(player1, food1, game)
-#     initial_move(player1, game, food1,agent)
-#     display(player1, food1, game)
-#     while not game.crash:
-#         state2 = agent.get_state(game,player1,food1)
-#         agent.actual = copy.deepcopy([player1.position, player1.x, player1.y, player1.x_change, player1.y_change, food1.x_food,
-#                    food1.y_food,game.crash, player1.eaten, player1.food])
-#         primary_q_array = []
-#         if randint(0,10)<agent.epsilon:
-#             final_move=randint(0,3)
-#         else:
-#             for i in agent.possible_moves(player1):
-#                 player1.eaten = False
-#                 player1.do_move(i, player1.x, player1.y, game, food1,agent)
-#                 if game.crash==True:
-#                     primary_q_array.append(agent.set_reward(game,player1, food1))
-#                 else:
-#                     primary_q = agent.predict_q(agent.model, state2, i)
-#                     primary_q_array.append(primary_q)
-#                 agent.replay(game,player1,food1,agent.actual)
-#             predicted_q =max(primary_q_array)
-#             max_index = primary_q_array.index(predicted_q)
-#             final_move = agent.possible_moves(player1)[max_index]
-#         player1.do_move(final_move, player1.x, player1.y, game, food1,agent)
-#         temp_reward = agent.reward + agent.set_reward(game, player1, food1)
-#         print('REWARD: ', temp_reward)
-#         temp_state = agent.get_state(game, player1, food1)
-#         agent.actual = copy.deepcopy([player1.position, player1.x, player1.y, player1.x_change, player1.y_change, food1.x_food,
-#                    food1.y_food,game.crash, player1.eaten, player1.food])
-#         secondary_q_array = []
-#
-#         if not game.crash:
-#             for j in agent.possible_moves(player1):
-#                 player1.eaten = False
-#                 player1.do_move(j, player1.x, player1.y, game, food1, agent)
-#
-#                 if game.crash == True:
-#                     secondary_q_array.append(agent.reward)
-#                     print('CRASH', secondary_q_array)
-#
-#                 else:
-#
-#                     secondary_q = agent.predict_q(agent.model, temp_state, j)
-#                     secondary_q_array.append(secondary_q)
-#                 agent.replay(game, player1, food1, agent.actual)
-#             max_target_q = max(secondary_q_array)
-#             target_q = [temp_reward + agent.gamma * max_target_q]
-#             print('1', target_q)
-#
-#         else:
-#             target_q = temp_reward
-#             print('2', target_q)
-#         #agent.agent_target = target_q
-#         #agent.agent_predict = predicted_q
-#         #agent.store_memory(state2, final_move, target_q[0])
-#         print('3', state2)
-#         print('3', final_move)
-#         print('3', target_q[0])
-#         print('3', [np.hstack(np.array([state2, final_move, target_q[0][0]]))])
-#         agent.dataframe = agent.dataframe.append([np.hstack(np.array([state2, final_move, target_q[0][0]]))])
-#         agent.train2_q(agent.dataframe[agent.dataframe.columns[:17]], agent.dataframe[agent.dataframe.columns[17]])
-#         display(player1, food1, game)
-#         pygame.time.wait(game.speed)
-#     print('GAME: ',counter_games)
-#     counter_games = counter_games + 1
-#
-# agent.model.save_weights('weights.hdf5')
+    fit = np.polyfit(counter_plot, score_plot, 1)
+    fit_fn = np.poly1d(fit)
+    plt.plot(counter_plot, score_plot, 'yo', counter_plot, fit_fn(counter_plot), '--k')
+    plt.show()
 
 run()
