@@ -1,4 +1,7 @@
 import numpy as np
-array1 = [1,0,0]
-if array1 == [1,0,0]:
-    print('SI')
+from operator import sub
+
+array = [20, 20]
+
+array_fin =list(map(sub, array, [20,20]))
+print(array_fin)

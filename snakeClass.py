@@ -10,6 +10,8 @@ from keras.utils import to_categorical
 import matplotlib.pyplot as plt
 from sklearn import linear_model
 
+display_option = False
+speed = 0
 class Game:
 
     def __init__(self, display_width, display_height):
@@ -78,8 +80,6 @@ class Player(object):
         self.update_position(self.x, self.y,agent)
 
 
-
-
     def display_player(self, x, y, food, game, player):
         self.position[-1][0] = x
         self.position[-1][1] = y
@@ -132,42 +132,6 @@ def update_screen():
 def initial_move(player, game, food,agent):
     player.do_move(1, player.x, player.y, game, food,agent)
 
-# def loop(player, food, game,agent):
-#     move = 0
-#     if food.x_food < player.x and [(player.x - 20), player.y] not in player.position and (player.x - 20) > 0:
-#         move = 0
-#
-#     elif food.x_food > player.x and [(player.x + 20), player.y] not in player.position and (
-#             player.x + 20) < game.display_width:
-#         move=1
-#
-#     elif food.y_food < player.y and [player.x, (player.y - 20)] not in player.position and (player.y - 20) > 0:
-#         move =2
-#
-#     elif food.y_food > player.y and [player.x, (player.y + 20)] not in player.position and (
-#             player.y + 20) < game.display_height:
-#         move = 3
-#
-#     elif [(player.x - 20), player.y] not in player.position and player.x_change == 0 and (player.x - 20) > 0:
-#         move = 0
-#
-#     elif [(player.x + 20), player.y] not in player.position and player.x_change == 0 and (
-#             player.x + 20) < game.display_width:
-#         move = 1
-#
-#     elif [player.x, (player.y - 20)] not in player.position and player.y_change == 0 and (player.y - 20) > 0:
-#         move = 2
-#
-#     elif [player.x, (player.y + 20)] not in player.position and player.y_change == 0 and (
-#             player.y + 20) < game.display_height:
-#         move = 3
-#
-#     else:
-#         move = randint(1, 4)
-#
-#     player.do_move(move, player.x, player.y, game, food,agent)
-
-
 def run():
     pygame.init()
     agent = DQNAgent()
@@ -179,7 +143,6 @@ def run():
         game = Game(400, 400)
         player1 = game.player
         food1 = game.food
-        #agent.reward = 0
         #Initialize storage to train first network
         state_init1 = agent.get_state(game,player1,food1)    #[0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0]
         action = [1, 0, 0]
@@ -189,8 +152,10 @@ def run():
         agent.remember(state_init1,action, reward1, state_init2, game.crash)
         agent.replay_new(agent.memory)
         #Performn first move
-        #display(player1, food1, game)
+        if display_option:
+            display(player1, food1, game)
         while not game.crash:
+            #player1.get_position_x()
             if counter_games < 15:
                 agent.epsilon = 3
             elif counter_games < 30:
@@ -207,8 +172,9 @@ def run():
             state_new = agent.get_state(game, player1, food1)
             reward = agent.set_reward(game, player1, food1, game.crash)
             agent.remember(state_old, final_move, reward, state_new, game.crash)
-            #display(player1, food1, game)
-            #pygame.time.wait(game.speed)
+            if display_option:
+                display(player1, food1, game)
+                pygame.time.wait(speed)
 
 
         agent.replay_new(agent.memory)
@@ -216,7 +182,7 @@ def run():
         print('Game', counter_games, '      Score:', game.score)
         score_plot.append(game.score)
         counter_plot.append(counter_games)
-    agent.model.save_weights('weights_new2.hdf5')
+    agent.model.save_weights('weights_new5_lr0001.hdf5')
 
     fit = np.polyfit(counter_plot, score_plot, 1)
     fit_fn = np.poly1d(fit)

@@ -16,6 +16,8 @@ import pandas as pd
 import keras
 import keras.backend as K
 import copy
+from operator import sub, add
+
 
 pd.set_option('display.max_columns', 500)
 
@@ -30,22 +32,41 @@ class DQNAgent(object):
         self.agent_predict = 0
         self.learning_rate = 0.001
         self.model = self.network()
-        #self.model = self.network("weights_new.hdf5")
+        #self.model = self.network("weights_new3.hdf5")
         self.epsilon = 2
         self.actual = []
         self.memory = []
 
 
     def get_state(self, game, player, food):
+
         state = [
-                    player.position[-1][0] - 20 in player.position or player.position[-1][0] - 20 < 0,                    # danger left
-                    player.position[-1][0] - 40 in player.position or player.position[-1][0] - 40 < 0,                    # danger 2 left
-                    player.position[-1][0] + 20 in player.position or player.position[-1][0] + 20 > game.display_width,   # danger right
-                    player.position[-1][0] + 40 in player.position or player.position[-1][0] + 40 > game.display_width,   # danger 2 right
-                    player.position[-1][1] - 20 in player.position or player.position[-1][1] - 20 < 0,                    # danger up
-                    player.position[-1][-1] - 40 in player.position or player.position[-1][-1] - 40 < 0,                  # danger 2 up
-                    player.position[-1][1] + 20 in player.position or player.position[-1][1] + 20 > game.display_height,  # danger down
-                    player.position[-1][-1] + 40 in player.position or player.position[-1][-1] + 40 > game.display_height,# danger 2 down
+                (list(map(add, player.position[-1], [-20,0])) in player.position and player.x_change != 20) or
+                player.position[-1][0] - 20 < 0,  # danger left
+                (list(map(add, player.position[-1], [-40,0])) in player.position and player.x_change != 20) or
+                player.position[-1][0] - 40 < 0,  # danger 2 left
+                (list(map(add, player.position[-1], [20,0])) in player.position and player.x_change != -20) or
+                player.position[-1][0] + 20 > game.display_width,  # danger right
+                (list(map(add, player.position[-1], [40, 0])) in player.position and player.x_change != -20) or
+                player.position[-1][0] + 40 > game.display_width,  # danger 2 right
+                (list(map(add, player.position[-1], [0, -20])) in player.position and player.y_change != 20) or
+                player.position[-1][-1] - 20 < 0,  # danger up
+                (list(map(add, player.position[-1], [0, -40])) in player.position and player.y_change != 20) or
+                player.position[-1][-1] - 40 < 0,  # danger 2 up
+                (list(map(add, player.position[-1], [0, 20])) in player.position and player.y_change != -20) or
+                player.position[-1][-1] + 20 >= game.display_height,  # danger down
+                (list(map(add, player.position[-1], [0, 40])) in player.position and player.y_change != -20) or
+                player.position[-1][-1] + 40 > game.display_height,  # danger 2 down
+
+            # (player.position[-1][0] - 20 in self.get_position_x_y(player)[0] and player.x_change!=20) or player.position[-1][0] - 20 <= 0,  # danger left
+                    # (player.position[-1][0] - 40 in self.get_position_x_y(player)[0] and player.x_change!=20) or player.position[-1][0] - 40 <= 0,                    # danger 2 left
+                    # (player.position[-1][0] + 20 in self.get_position_x_y(player)[0] and player.x_change != -20) or player.position[-1][0] + 20 >= game.display_width,   # danger right
+                    # (player.position[-1][0] + 40 in self.get_position_x_y(player)[0] and player.x_change != -20) or player.position[-1][0] + 40 >= game.display_width,  # danger 2 right
+                    # (player.position[-1][-1] - 20 in self.get_position_x_y(player)[1] and player.y_change != 20) or player.position[-1][-1] - 20 <= 0,                    # danger up
+                    # (player.position[-1][-1] - 40 in self.get_position_x_y(player)[1] and player.y_change != 20) or player.position[-1][-1] - 40 <= 0,                  # danger 2 up
+                    # (player.position[-1][-1] + 20 in self.get_position_x_y(player)[1] and player.y_change != -20) or player.position[-1][-1] + 20 >= game.display_height,  # danger down
+                    # (player.position[-1][-1] + 40 in self.get_position_x_y(player)[1] and player.y_change != -20) or player.position[-1][-1] + 40 >= game.display_height,# danger 2 down
+                    #player.x_change == - 20 and (player.position[-1][0] - 20 < 0 or player.position[-1][0] - 20 in self.get_position_x_y(player)[0]),#danger straight
                     player.x_change == -20,           # move left
                     player.x_change == 20,            # move right
                     player.y_change == -20,           # move up
@@ -61,8 +82,32 @@ class DQNAgent(object):
                 state[i]=1
             else:
                 state[i]=0
+        # if state[0] == 1:
+        #     print('DANGER LEFT')
+        # if state[1] == 1:
+        #     print('DANGER 2 LEFT')
+        # if state[2] == 1:
+        #     print('DANGER RIGHT')
+        # if state[3] == 1:
+        #     print('DANGER 2 RIGHT')
+        # if state[4] == 1:
+        #     print('DANGER UP')
+        # if state[5] == 1:
+        #     print('DANGER 2 UP')
+        # if state[6] == 1:
+        #     print('DANGER DOWN')
+        # if state[7] == True:
+        #     print('DANGER 2 DOWN')
+
         return np.asarray(state)
 
+    def get_position_x_y(self, player):
+        position_x = []
+        position_y = []
+        for i in player.position:
+            position_x.append(i[0])
+            position_y.append(i[1])
+        return position_x, position_y
 
     def set_reward(self, game, player, food, crash):
         if crash:
@@ -119,8 +164,8 @@ class DQNAgent(object):
 
     def network(self,weights=None):
         model = Sequential()
-        model.add(Dense(output_dim=50, activation='relu', input_dim=16))
-        model.add(Dense(output_dim=50, activation='relu'))
+        model.add(Dense(output_dim=30, activation='relu', input_dim=16))
+        model.add(Dense(output_dim=30, activation='relu'))
         model.add(Dense(output_dim=3, activation='softmax'))
         opt = Adam(self.learning_rate)
         model.compile(loss='mse', optimizer=opt)
