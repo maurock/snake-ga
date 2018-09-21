@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from sklearn import linear_model
 
 display_option = False
-speed = 0
+speed = 50
 class Game:
 
     def __init__(self, display_width, display_height):
@@ -22,7 +22,6 @@ class Game:
         self.crash = False
         self.player = Player(self)
         self.food = Food(self, self.player)
-        self.speed = 50
         self.score = 0
 
 
@@ -72,7 +71,6 @@ class Player(object):
         self.x = x + self.x_change
         self.y = y + self.y_change
 
-        #print(self.x_change, self.y_change, self.x, self.y, self.position)
         if self.x < 0 or self.x == game.display_width or self.y < 0 or self.y == game.display_height or [self.x, self.y] in self.position:
             game.crash = True
         eat(self, food, game)
@@ -129,8 +127,23 @@ def display(player, food, game):
 def update_screen():
     pygame.display.update()
 
-def initial_move(player, game, food,agent):
-    player.do_move(1, player.x, player.y, game, food,agent)
+
+def initialize_game(player, game, food, agent):
+    state_init1 = agent.get_state(game, player, food)  # [0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0]
+    action = [1, 0, 0]
+    player.do_move(action, player.x, player.y, game, food, agent)
+    state_init2 = agent.get_state(game, player, food)
+    reward1 = agent.set_reward(player, food, game.crash)
+    agent.remember(state_init1, action, reward1, state_init2, game.crash)
+    agent.replay_new(agent.memory)
+
+
+def plot_score(array_counter, array_score):
+    fit = np.polyfit(array_counter, array_score, 1)
+    fit_fn = np.poly1d(fit)
+    plt.plot(array_counter, array_score, 'yo', array_counter, fit_fn(array_counter), '--k')
+    plt.show()
+
 
 def run():
     pygame.init()
@@ -138,39 +151,29 @@ def run():
     counter_games = 0
     score_plot = []
     counter_plot =[]
-    while counter_games < 100:
-        #Initialize game
+    while counter_games < 200:
+        #Initialize classes
         game = Game(400, 400)
         player1 = game.player
         food1 = game.food
-        #Initialize storage to train first network
-        state_init1 = agent.get_state(game,player1,food1)    #[0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0]
-        action = [1, 0, 0]
-        player1.do_move(action, player1.x, player1.y, game, food1, agent)
-        state_init2 = agent.get_state(game, player1, food1)
-        reward1 = agent.set_reward(game,player1,food1,game.crash)
-        agent.remember(state_init1,action, reward1, state_init2, game.crash)
-        agent.replay_new(agent.memory)
-        #Performn first move
+
+        #Perform first move
+        initialize_game(player1, game, food1, agent)
+
         if display_option:
             display(player1, food1, game)
         while not game.crash:
-            #player1.get_position_x()
-            if counter_games < 15:
-                agent.epsilon = 3
-            elif counter_games < 30:
-                agent.epsilon = 2
-            elif counter_games >= 30:
-                agent.epsilon = 0
+            agent.epsilon = 0
             state_old = agent.get_state(game, player1, food1)
-            if randint(0, 10) < agent.epsilon:
+            if randint(0, 200) < agent.epsilon:
                 final_move = to_categorical(randint(0, 2), num_classes=3)[0]
             else:
-                prediction = agent.model.predict(state_old.reshape((1,16)))
+                prediction = agent.model.predict(state_old.reshape((1,11)))
                 final_move = to_categorical(np.argmax(prediction[0]), num_classes=3)[0]
             player1.do_move(final_move, player1.x, player1.y, game, food1, agent)
             state_new = agent.get_state(game, player1, food1)
-            reward = agent.set_reward(game, player1, food1, game.crash)
+            reward = agent.set_reward(player1, food1, game.crash)
+            agent.train_short_memory(state_old, final_move, reward, state_new, game.crash)
             agent.remember(state_old, final_move, reward, state_new, game.crash)
             if display_option:
                 display(player1, food1, game)
@@ -182,11 +185,9 @@ def run():
         print('Game', counter_games, '      Score:', game.score)
         score_plot.append(game.score)
         counter_plot.append(counter_games)
-    agent.model.save_weights('weights_new5_lr0001.hdf5')
+    agent.model.save_weights('weights_new17_1.hdf5')
 
-    fit = np.polyfit(counter_plot, score_plot, 1)
-    fit_fn = np.poly1d(fit)
-    plt.plot(counter_plot, score_plot, 'yo', counter_plot, fit_fn(counter_plot), '--k')
-    plt.show()
+    plot_score(counter_plot, score_plot)
+
 
 run()
