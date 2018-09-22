@@ -18,10 +18,10 @@ class Game:
         self.game_width = game_width
         self.game_height = game_height
         self.gameDisplay = pygame.display.set_mode((game_width, game_height+60))
-        self.bg = pygame.image.load("background.png")
+        self.bg = pygame.image.load("img/background.png")
         self.crash = False
         self.player = Player(self)
-        self.food = Food(self, self.player)
+        self.food = Food()
         self.score = 0
 
 
@@ -36,11 +36,11 @@ class Player(object):
         self.position.append([self.x, self.y])
         self.food = 1
         self.eaten = False
-        self.image = pygame.image.load('snakeBody.png')
+        self.image = pygame.image.load('img/snakeBody.png')
         self.x_change = 20
         self.y_change = 0
 
-    def update_position(self, x, y,agent):
+    def update_position(self, x, y):
         if self.position[-1][0] != x or self.position[-1][1] != y:
             if self.food > 1:
                 for i in range(0, self.food - 1):
@@ -74,9 +74,9 @@ class Player(object):
             game.crash = True
         eat(self, food, game)
 
-        self.update_position(self.x, self.y,agent)
+        self.update_position(self.x, self.y)
 
-    def display_player(self, x, y, food, game, player):
+    def display_player(self, x, y, food, game):
         self.position[-1][0] = x
         self.position[-1][1] = y
 
@@ -92,10 +92,10 @@ class Player(object):
 
 class Food(object):
 
-    def __init__(self, game, player):
+    def __init__(self):
         self.x_food = 240
         self.y_food = 200
-        self.image = pygame.image.load('food2.png')
+        self.image = pygame.image.load('img/food2.png')
 
     def food_coord(self, game, player):
         x_rand = randint(20, game.game_width - 40)
@@ -143,7 +143,7 @@ def display_ui(game, score, record):
 def display(player, food, game, record):
     game.gameDisplay.fill((255, 255, 255))
     display_ui(game, game.score, record)
-    player.display_player(player.position[-1][0], player.position[-1][1], player.food, game, player)
+    player.display_player(player.position[-1][0], player.position[-1][1], player.food, game)
     food.display_food(food.x_food, food.y_food, game)
 
 
@@ -156,7 +156,7 @@ def initialize_game(player, game, food, agent):
     action = [1, 0, 0]
     player.do_move(action, player.x, player.y, game, food, agent)
     state_init2 = agent.get_state(game, player, food)
-    reward1 = agent.set_reward(player, food, game.crash)
+    reward1 = agent.set_reward(player, game.crash)
     agent.remember(state_init1, action, reward1, state_init2, game.crash)
     agent.replay_new(agent.memory)
 
@@ -195,7 +195,7 @@ def run():
                 final_move = to_categorical(np.argmax(prediction[0]), num_classes=3)[0]
             player1.do_move(final_move, player1.x, player1.y, game, food1, agent)
             state_new = agent.get_state(game, player1, food1)
-            reward = agent.set_reward(player1, food1, game.crash)
+            reward = agent.set_reward(player1, game.crash)
             agent.train_short_memory(state_old, final_move, reward, state_new, game.crash)
             agent.remember(state_old, final_move, reward, state_new, game.crash)
             record = get_record(game.score, record)
@@ -208,7 +208,7 @@ def run():
         print('Game', counter_games, '      Score:', game.score)
         score_plot.append(game.score)
         counter_plot.append(counter_games)
-    agent.model.save_weights('weights_new17_1.hdf5')
+    agent.model.save_weights('weights.hdf5')
     plot_score(counter_plot, score_plot)
 
 
