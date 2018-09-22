@@ -1,24 +1,10 @@
-# import snakeClass
-import pygame
-from keras.models import Sequential, Model
-from keras.layers.core import Flatten, Dense, Dropout
-from keras.optimizers import RMSprop, Adam
+from keras.optimizers import Adam
+from keras.models import Sequential
+from keras.layers.core import Dense, Dropout
 import random
 import numpy as np
 import pandas as pd
-import pygame
-from keras.models import Sequential, Model
-from keras.layers.core import Flatten, Dense, Dropout
-from keras.optimizers import RMSprop
-import random
-import numpy as np
-import pandas as pd
-import keras
-import keras.backend as K
-import copy
-from operator import sub, add
-
-pd.set_option('display.max_columns', 500)
+from operator import add
 
 
 class DQNAgent(object):
@@ -31,8 +17,7 @@ class DQNAgent(object):
         self.agent_target = 1
         self.agent_predict = 0
         self.learning_rate = 0.000005
-
-        #self.model = self.network()
+        self.record = 0
         self.model = self.network("weights_new17_1.hdf5")
         self.epsilon = 0
         self.actual = []
@@ -42,24 +27,24 @@ class DQNAgent(object):
 
         state = [
             (player.x_change == 20 and player.y_change == 0 and ((list(map(add, player.position[-1], [20, 0])) in player.position) or
-            player.position[-1][0] + 20 >= game.display_width)) or (player.x_change == -20 and player.y_change == 0 and ((list(map(add, player.position[-1], [-20, 0])) in player.position) or
-            player.position[-1][0] - 20 < 0)) or (player.x_change == 0 and player.y_change == -20 and ((list(map(add, player.position[-1], [0, -20])) in player.position) or
-            player.position[-1][-1] - 20 < 0)) or (player.x_change == 0 and player.y_change == 20 and ((list(map(add, player.position[-1], [0, 20])) in player.position) or
-            player.position[-1][-1] + 20 >= game.display_height)),  # danger straight
+            player.position[-1][0] + 20 >= (game.game_width - 20))) or (player.x_change == -20 and player.y_change == 0 and ((list(map(add, player.position[-1], [-20, 0])) in player.position) or
+            player.position[-1][0] - 20 < 20)) or (player.x_change == 0 and player.y_change == -20 and ((list(map(add, player.position[-1], [0, -20])) in player.position) or
+            player.position[-1][-1] - 20 < 20)) or (player.x_change == 0 and player.y_change == 20 and ((list(map(add, player.position[-1], [0, 20])) in player.position) or
+            player.position[-1][-1] + 20 >= (game.game_height-20))),  # danger straight
 
             (player.x_change == 0 and player.y_change == -20 and ((list(map(add,player.position[-1],[20, 0])) in player.position) or
-            player.position[ -1][0] + 20 > game.display_width)) or (player.x_change == 0 and player.y_change == 20 and ((list(map(add,player.position[-1],
-            [-20,0])) in player.position) or player.position[-1][0] - 20 < 0)) or (player.x_change == -20 and player.y_change == 0 and ((list(map(
-            add,player.position[-1],[0,-20])) in player.position) or player.position[-1][-1] - 20 < 0)) or (player.x_change == 20 and player.y_change == 0 and (
+            player.position[ -1][0] + 20 > (game.game_width-20))) or (player.x_change == 0 and player.y_change == 20 and ((list(map(add,player.position[-1],
+            [-20,0])) in player.position) or player.position[-1][0] - 20 < 20)) or (player.x_change == -20 and player.y_change == 0 and ((list(map(
+            add,player.position[-1],[0,-20])) in player.position) or player.position[-1][-1] - 20 < 20)) or (player.x_change == 20 and player.y_change == 0 and (
             (list(map(add,player.position[-1],[0,20])) in player.position) or player.position[-1][
-             -1] + 20 >= game.display_height)),  # danger right
+             -1] + 20 >= (game.game_height-20))),  # danger right
 
              (player.x_change == 0 and player.y_change == 20 and ((list(map(add,player.position[-1],[20,0])) in player.position) or
-             player.position[-1][0] + 20 > game.display_width)) or (player.x_change == 0 and player.y_change == -20 and ((list(map(
-             add, player.position[-1],[-20,0])) in player.position) or player.position[-1][0] - 20 < 0)) or (player.x_change == 20 and player.y_change == 0 and (
-            (list(map(add,player.position[-1],[0,-20])) in player.position) or player.position[-1][-1] - 20 < 0)) or (
+             player.position[-1][0] + 20 > (game.game_width-20))) or (player.x_change == 0 and player.y_change == -20 and ((list(map(
+             add, player.position[-1],[-20,0])) in player.position) or player.position[-1][0] - 20 < 20)) or (player.x_change == 20 and player.y_change == 0 and (
+            (list(map(add,player.position[-1],[0,-20])) in player.position) or player.position[-1][-1] - 20 < 20)) or (
             player.x_change == -20 and player.y_change == 0 and ((list(map(add,player.position[-1],[0,20])) in player.position) or
-            player.position[-1][-1] + 20 >= game.display_height)), #danger left
+            player.position[-1][-1] + 20 >= (game.game_height-20))), #danger left
 
 
             player.x_change == -20,  # move left
@@ -80,17 +65,13 @@ class DQNAgent(object):
 
         return np.asarray(state)
 
-    def set_reward(self, player, food, crash):
+    def set_reward(self, player, crash):
         self.reward = 0
         if crash:
             self.reward = -10
             return self.reward
         if player.eaten:
             self.reward = 10
-        # elif (player.x_change < 0 and food.x_food < player.x) or (player.x_change > 0 and food.x_food > player.x) or (player.y_change < 0 and food.y_food < player.y) or (player.y_change > 0 and food.y_food > player.y):
-        #     self.reward = 1
-        # else:
-        #     self.reward = -1
         return self.reward
 
     def network(self, weights=None):
@@ -101,8 +82,6 @@ class DQNAgent(object):
         model.add(Dropout(0.25))
         model.add(Dense(output_dim=120, activation='relu'))
         model.add(Dropout(0.25))
-
-        #model.add(Dense(output_dim=300, activation='relu'))
         model.add(Dense(output_dim=3, activation='softmax'))
         opt = Adam(self.learning_rate)
         model.compile(loss='mse', optimizer=opt)
@@ -123,13 +102,8 @@ class DQNAgent(object):
             target = reward
             if not done:
                 target = reward + self.gamma * np.amax(self.model.predict(np.array([next_state]))[0])
-            # print('TARGET', target)
             target_f = self.model.predict(np.array([state]))
-            # print('TARGET_1', target_f[0])
-
             target_f[0][np.argmax(action)] = target
-            # print('TARGET_2', target_f[0])
-
             self.model.fit(np.array([state]), target_f, epochs=1, verbose=0)
 
     def train_short_memory(self, state, action, reward, next_state, done):
