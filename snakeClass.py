@@ -4,10 +4,12 @@ from DQN import DQNAgent
 import numpy as np
 from keras.utils import to_categorical
 import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
 
 # Set options to activate or deactivate the game view, and its speed
-display_option = True
-speed = 40
+display_option = False
+speed = 0
 pygame.font.init()
 
 
@@ -161,12 +163,11 @@ def initialize_game(player, game, food, agent):
     agent.replay_new(agent.memory)
 
 
-def plot_score(array_counter, array_score):
-    fit = np.polyfit(array_counter, array_score, 1)
-    fit_fn = np.poly1d(fit)
-    plt.plot(array_counter, array_score, 'yo', array_counter, fit_fn(array_counter), '--k')
+def plot_seaborn(array_counter, array_score):
+    sns.set(color_codes=True)
+    ax = sns.regplot(np.array([array_counter])[0], np.array([array_score])[0], color="b", x_jitter=.1, line_kws={'color':'green'})
+    ax.set(xlabel='games', ylabel='score')
     plt.show()
-
 
 def run():
     pygame.init()
@@ -175,7 +176,7 @@ def run():
     score_plot = []
     counter_plot =[]
     record = 0
-    while counter_games < 200:
+    while counter_games < 150:
         # Initialize classes
         game = Game(440, 440)
         player1 = game.player
@@ -187,6 +188,7 @@ def run():
             display(player1, food1, game, record)
 
         while not game.crash:
+            agent.epsilon = 80 - counter_games
             state_old = agent.get_state(game, player1, food1)
             if randint(0, 200) < agent.epsilon:
                 final_move = to_categorical(randint(0, 2), num_classes=3)[0]
@@ -209,7 +211,7 @@ def run():
         score_plot.append(game.score)
         counter_plot.append(counter_games)
     agent.model.save_weights('weights.hdf5')
-    plot_score(counter_plot, score_plot)
+    plot_seaborn(counter_plot, score_plot)
 
 
 run()
