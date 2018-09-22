@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/DNQ_internet.py" line="73" />
-  </component>
   <component name="ChangeListManager">
     <list default="true" id="2854170d-951e-4fe7-87bf-8e693d6bacb2" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/DQN.py" afterPath="$PROJECT_DIR$/DQN.py" />
-      <change beforePath="$PROJECT_DIR$/snakeClass.py" afterPath="$PROJECT_DIR$/snakeClass.py" />
+      <change beforePath="$PROJECT_DIR$/DNQ_internet.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/car.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/try.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights.hdf5" afterPath="$PROJECT_DIR$/weights.hdf5" />
+      <change beforePath="$PROJECT_DIR$/weights2.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights3.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new10.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new11.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new12.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new13.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new14.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new14_1.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new14_2.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new15.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new15_1.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new16.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new17.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new17_1.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new2.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new3.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new4_lr00005.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new5_lr0001.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new5_lr0004.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new6.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new7_random.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new8.hdf5" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/weights_new9.hdf5" afterPath="" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,7 +40,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="snakeClass.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="snakeClass.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/snakeClass.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="147">
@@ -29,10 +52,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DQN.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="DQN.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DQN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-480">
+            <state relative-caret-position="402">
               <caret line="67" column="33" lean-forward="false" selection-start-line="67" selection-start-column="33" selection-end-line="67" selection-end-column="33" />
               <folding>
                 <element signature="e#0#33#0" expanded="true" />
@@ -311,9 +334,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1234375" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1234375" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3082873" sideWeight="0.15572916" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22651933" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -661,9 +683,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="756">
           <caret line="45" column="8" lean-forward="false" selection-start-line="45" selection-start-column="8" selection-end-line="45" selection-end-column="58" />
-          <folding>
-            <element signature="e#0#35#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -681,10 +701,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/try.py">
+    <entry file="file://$PROJECT_DIR$/DQN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="41" />
+        <state relative-caret-position="402">
+          <caret line="67" column="33" lean-forward="false" selection-start-line="67" selection-start-column="33" selection-end-line="67" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#33#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -698,13 +721,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DQN.py">
+    <entry file="file://$PROJECT_DIR$/try.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-480">
-          <caret line="67" column="33" lean-forward="false" selection-start-line="67" selection-start-column="33" selection-end-line="67" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#33#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="84">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="41" />
+          <folding />
         </state>
       </provider>
     </entry>
