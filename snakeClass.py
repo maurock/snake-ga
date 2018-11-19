@@ -196,11 +196,11 @@ def run():
             
             #perform random actions based on agent.epsilon, or choose the action
             if randint(0, 200) < agent.epsilon:
-                final_move = to_categorical(randint(0, 2), num_classes=3)[0]
+                final_move = to_categorical(randint(0, 2), num_classes=3)
             else:
                 # predict action based on the old state
                 prediction = agent.model.predict(state_old.reshape((1,11)))
-                final_move = to_categorical(np.argmax(prediction[0]), num_classes=3)[0]
+                final_move = to_categorical(np.argmax(prediction[0]), num_classes=3)
                 
             #perform new move and get new state
             player1.do_move(final_move, player1.x, player1.y, game, food1, agent)
