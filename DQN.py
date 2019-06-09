@@ -18,7 +18,6 @@ class DQNAgent(object):
         self.agent_predict = 0
         self.learning_rate = 0.0005
         self.model = self.network()
-        #self.model = self.network("weights.hdf5")
         self.epsilon = 0
         self.actual = []
         self.memory = []
