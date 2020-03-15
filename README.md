@@ -7,15 +7,23 @@ We are going to see how a Deep Q-Learning algorithm learns how to play snake, sc
 
 ## Install
 This project requires Python 3.6 with the pygame library installed, as well as Keras with Tensorflow backend.
+```bash
+git clone git@github.com:maurock/snake-ga.git
+```
 
 ## Run
 To run the game, executes in the snake-ga folder:
 
 ```python
-python snakeClass.py
+python snakeClass.py --episodes=150 --display=True --speed=0 --load-weights=True
 ```
+Arguments description:
+
+- --episodes - Type integer, default 150, number of games
+- --display - Type bool, default False, display or not game view
+- --speed - Type integer, default 0, game speed
+- --load-weight - Type bool, default False, loads pre-trained weights of agent for the neural network
 
 This will run the agent. The Deep neural network can be customized in the file DQN.py.
-To run the pre-trained agent, uncomment line 21 in DQN.py, so that the network loads the weights for the neural network. In case you want to train your own network, leave it as it is.
 
-In snakeClass.py you can set *display_option* = True and *speed* = 50, if you want to see the game running.
+In snakeClass.py you can set argument *--display*=True and *--speed*=50, if you want to see the game running.
