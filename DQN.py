@@ -5,25 +5,41 @@ import random
 import numpy as np
 import pandas as pd
 from operator import add
-
+import collections
 
 class DQNAgent(object):
-
-    def __init__(self):
+    def __init__(self, params):
         self.reward = 0
         self.gamma = 0.9
         self.dataframe = pd.DataFrame()
         self.short_memory = np.array([])
         self.agent_target = 1
         self.agent_predict = 0
-        self.learning_rate = 0.0005
-        self.model = self.network()
-        self.epsilon = 0
+        self.learning_rate = params['learning_rate']        
+        self.epsilon = 1
         self.actual = []
-        self.memory = []
+        self.first_layer = params['first_layer_size']
+        self.second_layer = params['second_layer_size']
+        self.third_layer = params['third_layer_size']
+        self.memory = collections.deque(maxlen=params['memory_size'])
+        self.weights = params['weights_path']
+        self.load_weights = params['load_weights']
+        self.model = self.network()
 
+    def network(self):
+        model = Sequential()
+        model.add(Dense(output_dim=self.first_layer, activation='relu', input_dim=11))
+        model.add(Dense(output_dim=self.second_layer, activation='relu'))
+        model.add(Dense(output_dim=self.third_layer, activation='relu'))
+        model.add(Dense(output_dim=3, activation='softmax'))
+        opt = Adam(self.learning_rate)
+        model.compile(loss='mse', optimizer=opt)
+
+        if self.load_weights:
+            model.load_weights(self.weights_path)
+        return model
+    
     def get_state(self, game, player, food):
-
         state = [
             (player.x_change == 20 and player.y_change == 0 and ((list(map(add, player.position[-1], [20, 0])) in player.position) or
             player.position[-1][0] + 20 >= (game.game_width - 20))) or (player.x_change == -20 and player.y_change == 0 and ((list(map(add, player.position[-1], [-20, 0])) in player.position) or
@@ -73,28 +89,12 @@ class DQNAgent(object):
             self.reward = 10
         return self.reward
 
-    def network(self, weights=None):
-        model = Sequential()
-        model.add(Dense(output_dim=120, activation='relu', input_dim=11))
-        model.add(Dropout(0.15))
-        model.add(Dense(output_dim=120, activation='relu'))
-        model.add(Dropout(0.15))
-        model.add(Dense(output_dim=120, activation='relu'))
-        model.add(Dropout(0.15))
-        model.add(Dense(output_dim=3, activation='softmax'))
-        opt = Adam(self.learning_rate)
-        model.compile(loss='mse', optimizer=opt)
-
-        if weights:
-            model.load_weights(weights)
-        return model
-
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
 
-    def replay_new(self, memory):
-        if len(memory) > 1000:
-            minibatch = random.sample(memory, 1000)
+    def replay_new(self, memory, batch_size):
+        if len(memory) > batch_size:
+            minibatch = random.sample(memory, batch_size)
         else:
             minibatch = memory
         for state, action, reward, next_state, done in minibatch:
