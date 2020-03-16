@@ -8,8 +8,6 @@ from DQN import DQNAgent
 from random import randint
 from keras.utils import to_categorical
 
-WEIGHTS_FILENAME = 'weights3.hdf5'
-
 #################################
 #   Define parameters manually  #
 #################################
@@ -17,14 +15,15 @@ def define_parameters():
     params = dict()
     params['epsilon_decay_linear'] = 1/75
     params['learning_rate'] = 0.00001
-    params['first_layer_size'] = 1000   # neurons in the first layer
-    params['second_layer_size'] = 200   # neurons in the second layer
-    params['third_layer_size'] = 400    # neurons in the third layer
+    params['first_layer_size'] = 150   # neurons in the first layer
+    params['second_layer_size'] = 150   # neurons in the second layer
+    params['third_layer_size'] = 150    # neurons in the third layer
     params['episodes'] = 150            
     params['memory_size'] = 2500
     params['batch_size'] = 500
-    params['weights_path'] = 'weights/weights2.hdf5'
-    params['load_weights'] = False      
+    params['weights_path'] = 'weights/weights.hdf5'
+    params['load_weights'] = True
+    params['train'] = False
     return params
 
 
@@ -190,23 +189,19 @@ def plot_seaborn(array_counter, array_score):
     plt.show()
 
 
-def test(params):
-    agent_test = DQNAgent(params)
-    
-
-def run(episodes, load_weights, display_option, speed, params):
+def run(display_option, speed, params):
     pygame.init()
     agent = DQNAgent(params)
-    weights_filepath = os.path.join(os.getcwd(), params['weights_path'])
-    #if load_weights and os.path.isfile(weights_filepath):
-    #    agent.model.load_weights(weights_filepath)
-    #    print("weights loaded")
+    weights_filepath = params['weights_path']
+    if params['load_weights']:
+        agent.model.load_weights(weights_filepath)
+        print("weights loaded")
 
     counter_games = 0
     score_plot = []
     counter_plot = []
     record = 0
-    while counter_games < episodes:
+    while counter_games < params['episodes']:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -222,8 +217,11 @@ def run(episodes, load_weights, display_option, speed, params):
             display(player1, food1, game, record)
 
         while not game.crash:
-            # agent.epsilon is set to give randomness to actions
-            agent.epsilon = 1 - (counter_games * params['epsilon_decay_linear'])
+            if not params['train']:
+                agent.epsilon = 0
+            else:
+                # agent.epsilon is set to give randomness to actions
+                agent.epsilon = 1 - (counter_games * params['epsilon_decay_linear'])
 
             # get old state
             state_old = agent.get_state(game, player1, food1)
@@ -243,23 +241,24 @@ def run(episodes, load_weights, display_option, speed, params):
             # set reward for the new state
             reward = agent.set_reward(player1, game.crash)
 
-            # train short memory base on the new action and state
-            agent.train_short_memory(state_old, final_move, reward, state_new, game.crash)
+            if params['train']:
+                # train short memory base on the new action and state
+                agent.train_short_memory(state_old, final_move, reward, state_new, game.crash)
+                # store the new data into a long term memory
+                agent.remember(state_old, final_move, reward, state_new, game.crash)
 
-            # store the new data into a long term memory
-            agent.remember(state_old, final_move, reward, state_new, game.crash)
             record = get_record(game.score, record)
             if display_option:
                 display(player1, food1, game, record)
                 pygame.time.wait(speed)
-        print(f"Memory size: {len(agent.memory)}")
-        print(f"Epsilon: {agent.epsilon}")
-        agent.replay_new(agent.memory, params['batch_size'])
+        if params['train']:
+            agent.replay_new(agent.memory, params['batch_size'])
         counter_games += 1
         print(f'Game {counter_games}      Score: {game.score}')
         score_plot.append(game.score)
         counter_plot.append(counter_games)
-    agent.model.save_weights(params['weights_path'])
+    if params['train']:
+        agent.model.save_weights(params['weights_path'])
     plot_seaborn(counter_plot, score_plot)
 
 
@@ -268,11 +267,8 @@ if __name__ == '__main__':
     pygame.font.init()
     parser = argparse.ArgumentParser()
     params = define_parameters()
-    parser.add_argument("--episodes", type=int, default=params['episodes'])             # TODO: delete
-    parser.add_argument("--display", type=bool, default=False)    
+    parser.add_argument("--display", type=bool, default=False)
     parser.add_argument("--speed", type=int, default=0)
-    parser.add_argument("--load-weights", type=bool, default=params['load_weights'])    # TODO: delete
     args = parser.parse_args()
     params['bayesian_optimization'] = False    # Use bayesOpt.py for Bayesian Optimization
-    params['load_weights'] = args.load_weights
-    run(args.episodes, args.display, args.speed, args.load_weights, params)
+    run(args.display, args.speed, params)

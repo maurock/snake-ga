@@ -15,15 +15,18 @@ git clone git@github.com:maurock/snake-ga.git
 To run the game, executes in the snake-ga folder:
 
 ```python
-python snakeClass.py --episodes=150 --display=True --speed=0 --load-weights=True
+python snakeClass.py --display=True --speed=50
 ```
 Arguments description:
 
-- --episodes - Type integer, default 150, number of games
-- --display - Type bool, default False, display or not game view
-- --speed - Type integer, default 0, game speed
-- --load-weight - Type bool, default False, loads pre-trained weights of agent for the neural network
+- --display - Type bool, default True, display or not game view
+- --speed - Type integer, default 50, game speed
 
-This will run the agent. The Deep neural network can be customized in the file DQN.py.
+This will run and show the agent. The default configuration loads the file *weights/weights.hdf5* and runs a test.
+The Deep neural network can be customized in the file snakeClass.py modifying the dictionary *params* in the function *define_parameters()*
 
-In snakeClass.py you can set argument *--display*=True and *--speed*=50, if you want to see the game running.
+To train the agent, set in the file snakeClass.py:
+- params['load_weights'] = False
+- params['train'] = True
+
+In snakeClass.py you can set argument *--display*=False and *--speed*=0, if you do not want to see the game running. This speeds up the training phase.

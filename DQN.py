@@ -36,7 +36,7 @@ class DQNAgent(object):
         model.compile(loss='mse', optimizer=opt)
 
         if self.load_weights:
-            model.load_weights(self.weights_path)
+            model.load_weights(self.weights)
         return model
     
     def get_state(self, game, player, food):
