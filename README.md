@@ -30,3 +30,11 @@ To train the agent, set in the file snakeClass.py:
 - params['train'] = True
 
 In snakeClass.py you can set argument *--display*=False and *--speed*=0, if you do not want to see the game running. This speeds up the training phase.
+
+## For Mac users
+It seems there is a OSX specific problem, since many users cannot see the game running.
+To fix this problem, in update_screen(), add this line.
+
+def update_screen():
+    pygame.display.update()
+    <b>pygame.event.get() # <--- Add this line ###
