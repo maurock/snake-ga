@@ -35,6 +35,8 @@ In snakeClass.py you can set argument *--display*=False and *--speed*=0, if you 
 It seems there is a OSX specific problem, since many users cannot see the game running.
 To fix this problem, in update_screen(), add this line.
 
+```                              
 def update_screen():
-    pygame.display.update()
-    <b>pygame.event.get() # <--- Add this line ###
+    pygame.display.update() <br>
+    pygame.event.get() # <--- Add this line ###
+```
