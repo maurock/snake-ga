@@ -2,24 +2,24 @@ import os
 import pygame
 import argparse
 import numpy as np
-import seaborn as sns
 import matplotlib.pyplot as plt
 from DQN import DQNAgent
 from random import randint
 from keras.utils import to_categorical
+import seaborn as sns
 
 #################################
 #   Define parameters manually  #
 #################################
 def define_parameters():
     params = dict()
-    params['epsilon_decay_linear'] = 1/75
+    params['epsilon_decay_linear'] = 1/75000
     params['learning_rate'] = 0.0005
     params['first_layer_size'] = 150   # neurons in the first layer
     params['second_layer_size'] = 150   # neurons in the second layer
-    params['third_layer_size'] = 150    # neurons in the third layer
-    params['episodes'] = 150            
-    params['memory_size'] = 2500
+    params['third_layer_size'] = 150   # neurons in the third layer
+    params['episodes'] = 1500            
+    params['memory_size'] = 250000000 #2500
     params['batch_size'] = 500
     params['weights_path'] = 'weights/weights.hdf5'
     params['load_weights'] = True
@@ -267,7 +267,8 @@ if __name__ == '__main__':
     pygame.font.init()
     parser = argparse.ArgumentParser()
     params = define_parameters()
-    parser.add_argument("--display", type=bool, default=True)
+    # parser.add_argument("--display", type=bool, default=True)
+    parser.add_argument("--display", type=bool, default=False)
     parser.add_argument("--speed", type=int, default=50)
     args = parser.parse_args()
     params['bayesian_optimization'] = False    # Use bayesOpt.py for Bayesian Optimization
