@@ -1,0 +1,8 @@
+snake_lr00019371_struct200_300_300_eps0
+Params: {'episodes': 2, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190057.txt', 'learning_rate': 0.0001937141601579515, 'first_layer_size': 200, 'second_layer_size': 300, 'third_layer_size': 300, 'epsilon_decay_linear': 0, 'name_scenario': 'snake_lr00019371_struct200_300_300_eps0', 'weights_path': 'weights/weights_snake_lr00019371_struct200_300_300_eps0.h5', 'train': False}
+Total score: 2   Mean: 1   Std dev:   0.0
+ 
+snake_lr00005829_struct200_50_200_eps2
+Params: {'episodes': 2, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190057.txt', 'learning_rate': 5.8287680069085044e-05, 'first_layer_size': 200, 'second_layer_size': 50, 'third_layer_size': 200, 'epsilon_decay_linear': 2, 'name_scenario': 'snake_lr00005829_struct200_50_200_eps2', 'weights_path': 'weights/weights_snake_lr00005829_struct200_50_200_eps2.h5', 'train': False}
+Total score: 0   Mean: 0   Std dev:   0.0
+ 

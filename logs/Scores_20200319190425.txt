@@ -1,0 +1,80 @@
+snake_lr00066711_struct100_200_300_eps120
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.0006671088271327207, 'first_layer_size': 100, 'second_layer_size': 200, 'third_layer_size': 300, 'epsilon_decay_linear': 120, 'name_scenario': 'snake_lr00066711_struct100_200_300_eps120', 'weights_path': 'weights/weights_snake_lr00066711_struct100_200_300_eps120.h5', 'train': False}
+Total score: 1590   Mean: 10.6   Std dev:   6.260561546098179
+ 
+snake_lr00088417_struct100_200_300_eps30
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.0008841734649773743, 'first_layer_size': 100, 'second_layer_size': 200, 'third_layer_size': 300, 'epsilon_decay_linear': 30, 'name_scenario': 'snake_lr00088417_struct100_200_300_eps30', 'weights_path': 'weights/weights_snake_lr00088417_struct100_200_300_eps30.h5', 'train': False}
+Total score: 2467   Mean: 16.446666666666665   Std dev:   10.621958177554978
+ 
+snake_lr00053319_struct100_50_100_eps120
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.000533193546882061, 'first_layer_size': 100, 'second_layer_size': 50, 'third_layer_size': 100, 'epsilon_decay_linear': 120, 'name_scenario': 'snake_lr00053319_struct100_50_100_eps120', 'weights_path': 'weights/weights_snake_lr00053319_struct100_50_100_eps120.h5', 'train': False}
+Total score: 600   Mean: 4   Std dev:   1.900194267708846
+ 
+snake_lr00051081_struct200_100_300_eps90
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.0005108060711725915, 'first_layer_size': 200, 'second_layer_size': 100, 'third_layer_size': 300, 'epsilon_decay_linear': 90, 'name_scenario': 'snake_lr00051081_struct200_100_300_eps90', 'weights_path': 'weights/weights_snake_lr00051081_struct200_100_300_eps90.h5', 'train': False}
+Total score: 3017   Mean: 20.113333333333333   Std dev:   9.613006196980043
+ 
+snake_lr00007919_struct300_200_100_eps90
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 7.918794353236998e-05, 'first_layer_size': 300, 'second_layer_size': 200, 'third_layer_size': 100, 'epsilon_decay_linear': 90, 'name_scenario': 'snake_lr00007919_struct300_200_100_eps90', 'weights_path': 'weights/weights_snake_lr00007919_struct300_200_100_eps90.h5', 'train': False}
+Total score: 2183   Mean: 14.553333333333333   Std dev:   8.807818877456329
+ 
+snake_lr00039636_struct200_100_200_eps60
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.00039636221156584545, 'first_layer_size': 200, 'second_layer_size': 100, 'third_layer_size': 200, 'epsilon_decay_linear': 60, 'name_scenario': 'snake_lr00039636_struct200_100_200_eps60', 'weights_path': 'weights/weights_snake_lr00039636_struct200_100_200_eps60.h5', 'train': False}
+Total score: 591   Mean: 3.94   Std dev:   1.675844973689072
+ 
+snake_lr00053872_struct300_50_50_eps30
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.0005387156658845444, 'first_layer_size': 300, 'second_layer_size': 50, 'third_layer_size': 50, 'epsilon_decay_linear': 30, 'name_scenario': 'snake_lr00053872_struct300_50_50_eps30', 'weights_path': 'weights/weights_snake_lr00053872_struct300_50_50_eps30.h5', 'train': False}
+Total score: 2583   Mean: 17.22   Std dev:   9.316125876257892
+ 
+snake_lr00057193_struct200_200_200_eps120
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.0005719335813607053, 'first_layer_size': 200, 'second_layer_size': 200, 'third_layer_size': 200, 'epsilon_decay_linear': 120, 'name_scenario': 'snake_lr00057193_struct200_200_200_eps120', 'weights_path': 'weights/weights_snake_lr00057193_struct200_200_200_eps120.h5', 'train': False}
+Total score: 2728   Mean: 18.186666666666667   Std dev:   10.081804106865844
+ 
+snake_lr00023502_struct200_300_50_eps60
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.00023501845629467593, 'first_layer_size': 200, 'second_layer_size': 300, 'third_layer_size': 50, 'epsilon_decay_linear': 60, 'name_scenario': 'snake_lr00023502_struct200_300_50_eps60', 'weights_path': 'weights/weights_snake_lr00023502_struct200_300_50_eps60.h5', 'train': False}
+Total score: 2539   Mean: 16.926666666666666   Std dev:   9.048042293846246
+ 
+snake_lr00066209_struct300_300_50_eps60
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.0006620925545328411, 'first_layer_size': 300, 'second_layer_size': 300, 'third_layer_size': 50, 'epsilon_decay_linear': 60, 'name_scenario': 'snake_lr00066209_struct300_300_50_eps60', 'weights_path': 'weights/weights_snake_lr00066209_struct300_300_50_eps60.h5', 'train': False}
+Total score: 1723   Mean: 11.486666666666666   Std dev:   7.992224969009398
+ 
+snake_lr00031494_struct200_200_50_eps150
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.00031494471298126344, 'first_layer_size': 200, 'second_layer_size': 200, 'third_layer_size': 50, 'epsilon_decay_linear': 150, 'name_scenario': 'snake_lr00031494_struct200_200_50_eps150', 'weights_path': 'weights/weights_snake_lr00031494_struct200_200_50_eps150.h5', 'train': False}
+Total score: 2982   Mean: 19.88   Std dev:   10.088148405680478
+ 
+snake_lr00028596_struct100_100_50_eps150
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.000285964733475369, 'first_layer_size': 100, 'second_layer_size': 100, 'third_layer_size': 50, 'epsilon_decay_linear': 150, 'name_scenario': 'snake_lr00028596_struct100_100_50_eps150', 'weights_path': 'weights/weights_snake_lr00028596_struct100_100_50_eps150.h5', 'train': False}
+Total score: 3015   Mean: 20.1   Std dev:   9.30739043870641
+ 
+snake_lr00010969_struct200_300_300_eps120
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.00010968974982318428, 'first_layer_size': 200, 'second_layer_size': 300, 'third_layer_size': 300, 'epsilon_decay_linear': 120, 'name_scenario': 'snake_lr00010969_struct200_300_300_eps120', 'weights_path': 'weights/weights_snake_lr00010969_struct200_300_300_eps120.h5', 'train': False}
+Total score: 3409   Mean: 22.726666666666667   Std dev:   10.088798138268023
+ 
+snake_lr00025869_struct200_100_100_eps150
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.00025868953302909644, 'first_layer_size': 200, 'second_layer_size': 100, 'third_layer_size': 100, 'epsilon_decay_linear': 150, 'name_scenario': 'snake_lr00025869_struct200_100_100_eps150', 'weights_path': 'weights/weights_snake_lr00025869_struct200_100_100_eps150.h5', 'train': False}
+Total score: 3052   Mean: 20.346666666666668   Std dev:   9.230811162642096
+ 
+snake_lr00052242_struct100_300_300_eps60
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.0005224151053210025, 'first_layer_size': 100, 'second_layer_size': 300, 'third_layer_size': 300, 'epsilon_decay_linear': 60, 'name_scenario': 'snake_lr00052242_struct100_300_300_eps60', 'weights_path': 'weights/weights_snake_lr00052242_struct100_300_300_eps60.h5', 'train': False}
+Total score: 900   Mean: 6   Std dev:   4.341156249652
+ 
+snake_lr00070273_struct300_200_200_eps150
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.0007027336011268658, 'first_layer_size': 300, 'second_layer_size': 200, 'third_layer_size': 200, 'epsilon_decay_linear': 150, 'name_scenario': 'snake_lr00070273_struct300_200_200_eps150', 'weights_path': 'weights/weights_snake_lr00070273_struct300_200_200_eps150.h5', 'train': False}
+Total score: 1462   Mean: 9.746666666666666   Std dev:   6.084623227532587
+ 
+snake_lr00017618_struct200_100_50_eps90
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.0001761762380559867, 'first_layer_size': 200, 'second_layer_size': 100, 'third_layer_size': 50, 'epsilon_decay_linear': 90, 'name_scenario': 'snake_lr00017618_struct200_100_50_eps90', 'weights_path': 'weights/weights_snake_lr00017618_struct200_100_50_eps90.h5', 'train': False}
+Total score: 3283   Mean: 21.886666666666667   Std dev:   9.504175462943909
+ 
+snake_lr00042738_struct50_300_50_eps60
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.00042737711977818937, 'first_layer_size': 50, 'second_layer_size': 300, 'third_layer_size': 50, 'epsilon_decay_linear': 60, 'name_scenario': 'snake_lr00042738_struct50_300_50_eps60', 'weights_path': 'weights/weights_snake_lr00042738_struct50_300_50_eps60.h5', 'train': False}
+Total score: 4398   Mean: 29.32   Std dev:   11.656907391451899
+ 
+snake_lr00008813_struct50_200_300_eps150
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 8.812995821921475e-05, 'first_layer_size': 50, 'second_layer_size': 200, 'third_layer_size': 300, 'epsilon_decay_linear': 150, 'name_scenario': 'snake_lr00008813_struct50_200_300_eps150', 'weights_path': 'weights/weights_snake_lr00008813_struct50_200_300_eps150.h5', 'train': False}
+Total score: 2743   Mean: 18.286666666666665   Std dev:   9.824866866708467
+ 
+snake_lr00074486_struct50_300_300_eps60
+Params: {'episodes': 150, 'memory_size': 2500, 'batch_size': 500, 'load_weights': True, 'bayesian_optimization': True, 'plot_score': False, 'display': False, 'log_path': 'logs/Scores_20200319190425.txt', 'learning_rate': 0.0007448567189619143, 'first_layer_size': 50, 'second_layer_size': 300, 'third_layer_size': 300, 'epsilon_decay_linear': 60, 'name_scenario': 'snake_lr00074486_struct50_300_300_eps60', 'weights_path': 'weights/weights_snake_lr00074486_struct50_300_300_eps60.h5', 'train': False}
+Total score: 1493   Mean: 9.953333333333333   Std dev:   6.151702625302738
+ 
