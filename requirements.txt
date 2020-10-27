@@ -8,7 +8,7 @@ cffi==1.14.0
 chardet==3.0.4
 click==7.1.2
 cmake-example==0.0.1
-cryptography==2.9.2
+cryptography==3.2
 cycler==0.10.0
 gast==0.2.2
 google-auth==1.14.1
