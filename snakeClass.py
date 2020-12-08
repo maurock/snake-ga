@@ -6,9 +6,15 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from DQN import DQNAgent
 from random import randint
-from keras.utils import to_categorical
 import random
 import statistics
+import torch.optim as optim
+import torch 
+from GPyOpt.methods import BayesianOptimization
+from bayesOpt import *
+import datetime
+import distutils.util
+DEVICE = 'cpu' # 'cuda' if torch.cuda.is_available() else 'cpu'
 
 #################################
 #   Define parameters manually  #
@@ -16,23 +22,27 @@ import statistics
 def define_parameters():
     params = dict()
     # Neural Network
-    params['epsilon_decay_linear'] = 1/75
-    params['learning_rate'] = 0.0005
-    params['first_layer_size'] = 50   # neurons in the first layer
-    params['second_layer_size'] = 300   # neurons in the second layer
+    params['epsilon_decay_linear'] = 1/90
+    params['learning_rate'] = 0.00013629
+    params['first_layer_size'] = 200    # neurons in the first layer
+    params['second_layer_size'] = 20   # neurons in the second layer
     params['third_layer_size'] = 50    # neurons in the third layer
-    params['episodes'] = 150           
+    params['episodes'] = 150          
     params['memory_size'] = 2500
     params['batch_size'] = 1000
     # Settings
-    params['weights_path'] = 'weights/weights3.hdf5'
-    params['load_weights'] = False
-    params['train'] = True
+    params['weights_path'] = 'weights/weights.h5'
+    params['load_weights'] = True
+    params['train'] = False
+    params["test"] = True
     params['plot_score'] = True
+    params['log_path'] = 'logs/scores_' + str(datetime.datetime.now().strftime("%Y%m%d%H%M%S")) +'.txt'
     return params
 
 
 class Game:
+    """ Initialize PyGAME """
+    
     def __init__(self, game_width, game_height):
         pygame.display.set_caption('SnakeGen')
         self.game_width = game_width
@@ -181,12 +191,11 @@ def initialize_game(player, game, food, agent, batch_size):
     agent.replay_new(agent.memory, batch_size)
 
 
-def plot_seaborn(array_counter, array_score,train):
+def plot_seaborn(array_counter, array_score, train):
     sns.set(color_codes=True, font_scale=1.5)
     sns.set_style("white")
     plt.figure(figsize=(13,8))
-    if train==False:
-        fit_reg = False
+    fit_reg = False if train== False else True        
     ax = sns.regplot(
         np.array([array_counter])[0],
         np.array([array_score])[0],
@@ -202,7 +211,6 @@ def plot_seaborn(array_counter, array_score,train):
     ax.plot(array_counter,y_mean, label='Mean', linestyle='--')
     ax.legend(loc='upper right')
     ax.set(xlabel='# games', ylabel='score')
-    plt.ylim(0,65)
     plt.show()
 
 
@@ -210,20 +218,22 @@ def get_mean_stdev(array):
     return statistics.mean(array), statistics.stdev(array)    
 
 
-def test(display_option, speed, params):
+def test(params):
     params['load_weights'] = True
     params['train'] = False
-    score, mean, stdev = run(display_option, speed, params)
+    params["test"] = False 
+    score, mean, stdev = run(params)
     return score, mean, stdev
 
 
-def run(display_option, speed, params):
+def run(params):
+    """
+    Run the DQN algorithm, based on the parameters previously set.   
+    """
     pygame.init()
     agent = DQNAgent(params)
-    weights_filepath = params['weights_path']
-    if params['load_weights']:
-        agent.model.load_weights(weights_filepath)
-        print("weights loaded")
+    agent = agent.to(DEVICE)
+    agent.optimizer = optim.Adam(agent.parameters(), weight_decay=0, lr=params['learning_rate'])
     counter_games = 0
     score_plot = []
     counter_plot = []
@@ -241,12 +251,12 @@ def run(display_option, speed, params):
 
         # Perform first move
         initialize_game(player1, game, food1, agent, params['batch_size'])
-        if display_option:
+        if params['display']:
             display(player1, food1, game, record)
 
         while not game.crash:
             if not params['train']:
-                agent.epsilon = 0.00
+                agent.epsilon = 0.01
             else:
                 # agent.epsilon is set to give randomness to actions
                 agent.epsilon = 1 - (counter_games * params['epsilon_decay_linear'])
@@ -256,11 +266,13 @@ def run(display_option, speed, params):
 
             # perform random actions based on agent.epsilon, or choose the action
             if random.uniform(0, 1) < agent.epsilon:
-                final_move = to_categorical(randint(0, 2), num_classes=3)
+                final_move = np.eye(3)[randint(0,2)]
             else:
                 # predict action based on the old state
-                prediction = agent.model.predict(state_old.reshape((1, 11)))
-                final_move = to_categorical(np.argmax(prediction[0]), num_classes=3)
+                with torch.no_grad():
+                    state_old_tensor = torch.tensor(state_old.reshape((1, 11)), dtype=torch.float32).to(DEVICE)
+                    prediction = agent(state_old_tensor)
+                    final_move = np.eye(3)[np.argmax(prediction.detach().cpu().numpy()[0])]
 
             # perform new move and get new state
             player1.do_move(final_move, player1.x, player1.y, game, food1, agent)
@@ -276,9 +288,9 @@ def run(display_option, speed, params):
                 agent.remember(state_old, final_move, reward, state_new, game.crash)
 
             record = get_record(game.score, record)
-            if display_option:
+            if params['display']:
                 display(player1, food1, game, record)
-                pygame.time.wait(speed)
+                pygame.time.wait(params['speed'])
         if params['train']:
             agent.replay_new(agent.memory, params['batch_size'])
         counter_games += 1
@@ -288,21 +300,28 @@ def run(display_option, speed, params):
         counter_plot.append(counter_games)
     mean, stdev = get_mean_stdev(score_plot)
     if params['train']:
-        agent.model.save_weights(params['weights_path'])
-        total_score, mean, stdev = test(display_option, speed, params)
+        model_weights = agent.state_dict()
+        torch.save(model_weights, params["weights_path"])
     if params['plot_score']:
         plot_seaborn(counter_plot, score_plot, params['train'])
-    print('Total score: {}   Mean: {}   Std dev:   {}'.format(total_score, mean, stdev))
     return total_score, mean, stdev
-
 
 if __name__ == '__main__':
     # Set options to activate or deactivate the game view, and its speed
     pygame.font.init()
     parser = argparse.ArgumentParser()
     params = define_parameters()
-    parser.add_argument("--display", type=bool, default=False)
-    parser.add_argument("--speed", type=int, default=50)
+    parser.add_argument("--display", nargs='?', type=distutils.util.strtobool, default=False)
+    parser.add_argument("--speed", nargs='?', type=int, default=50)
+    parser.add_argument("--bayesianopt", nargs='?', type=distutils.util.strtobool, default=True)
     args = parser.parse_args()
-    params['bayesian_optimization'] = False    # Use bayesOpt.py for Bayesian Optimization
-    run(args.display, args.speed, params)
+    print("Args", args)
+    params['display'] = args.display
+    params['speed'] = args.speed
+    if args.bayesianopt:
+        bayesOpt = BayesianOptimizer(params)
+        bayesOpt.optimize_RL()
+    if params['test']:
+        run(params)
+    if params['test']:
+        test(params)
