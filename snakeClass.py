@@ -311,9 +311,9 @@ if __name__ == '__main__':
     pygame.font.init()
     parser = argparse.ArgumentParser()
     params = define_parameters()
-    parser.add_argument("--display", nargs='?', type=distutils.util.strtobool, default=False)
+    parser.add_argument("--display", nargs='?', type=distutils.util.strtobool, default=True)
     parser.add_argument("--speed", nargs='?', type=int, default=50)
-    parser.add_argument("--bayesianopt", nargs='?', type=distutils.util.strtobool, default=True)
+    parser.add_argument("--bayesianopt", nargs='?', type=distutils.util.strtobool, default=False)
     args = parser.parse_args()
     print("Args", args)
     params['display'] = args.display
