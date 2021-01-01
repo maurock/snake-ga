@@ -22,17 +22,16 @@ DEVICE = 'cpu' # 'cuda' if torch.cuda.is_available() else 'cpu'
 def define_parameters():
     params = dict()
     # Neural Network
-    params['epsilon_decay_linear'] = 1/90
+    params['epsilon_decay_linear'] = 1/100
     params['learning_rate'] = 0.00013629
     params['first_layer_size'] = 200    # neurons in the first layer
     params['second_layer_size'] = 20   # neurons in the second layer
     params['third_layer_size'] = 50    # neurons in the third layer
-    params['episodes'] = 150          
+    params['episodes'] = 250          
     params['memory_size'] = 2500
     params['batch_size'] = 1000
     # Settings
     params['weights_path'] = 'weights/weights.h5'
-    params['load_weights'] = True
     params['train'] = False
     params["test"] = True
     params['plot_score'] = True
@@ -47,7 +46,7 @@ class Game:
         pygame.display.set_caption('SnakeGen')
         self.game_width = game_width
         self.game_height = game_height
-        #self.gameDisplay = pygame.display.set_mode((game_width, game_height + 60))
+        self.gameDisplay = pygame.display.set_mode((game_width, game_height + 60))
         self.bg = pygame.image.load("img/background.png")
         self.crash = False
         self.player = Player(self)
@@ -253,8 +252,9 @@ def run(params):
         initialize_game(player1, game, food1, agent, params['batch_size'])
         if params['display']:
             display(player1, food1, game, record)
-
-        while not game.crash:
+        
+        steps = 0       # steps since the last positive reward
+        while (not game.crash) and (steps < 100):
             if not params['train']:
                 agent.epsilon = 0.01
             else:
@@ -280,7 +280,11 @@ def run(params):
 
             # set reward for the new state
             reward = agent.set_reward(player1, game.crash)
-
+            
+            # if food is eaten, steps is set to 0
+            if reward > 0:
+                steps = 0
+                
             if params['train']:
                 # train short memory base on the new action and state
                 agent.train_short_memory(state_old, final_move, reward, state_new, game.crash)
@@ -291,6 +295,7 @@ def run(params):
             if params['display']:
                 display(player1, food1, game, record)
                 pygame.time.wait(params['speed'])
+            steps+=1
         if params['train']:
             agent.replay_new(agent.memory, params['batch_size'])
         counter_games += 1
@@ -321,7 +326,12 @@ if __name__ == '__main__':
     if args.bayesianopt:
         bayesOpt = BayesianOptimizer(params)
         bayesOpt.optimize_RL()
-    if params['test']:
+    if params['train']:
+        print("Training...")
+        params['load_weights'] = False   # when training, the network is not pre-trained
         run(params)
     if params['test']:
-        test(params)
+        print("Testing...")
+        params['train'] = False
+        params['load_weights'] = True
+        run(params)
