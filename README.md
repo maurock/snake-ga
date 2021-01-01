@@ -12,7 +12,7 @@ We are going to see how a Deep Q-Learning algorithm learns how to play Snake, sc
 Additionally, it is possible to run the Bayesian Optimization method to find the optimal parameters of the Deep neural network, as well as some parameters of the Deep RL approach.
 
 ## Install
-This project requires Python 3.6 with the pygame library installed, as well as Pytorch. \
+This project requires Python 3.6 with the pygame library installed, as well as Pytorch. If you encounter any error with `torch=1.7.1`, you might need to install Visual C++ 2015-2019 (or simply downgrade your pytorch version, it should be fine). \
 The full list of requirements is in `requirements.txt`. 
 ```bash
 git clone git@github.com:maurock/snake-ga.git
@@ -22,7 +22,7 @@ git clone git@github.com:maurock/snake-ga.git
 To run and show the game, executes in the snake-ga folder:
 
 ```python
-python snakeClass.py --display=True --speed=50
+python snakeClass.py
 ```
 Arguments description:
 
@@ -32,7 +32,6 @@ Arguments description:
 The default configuration loads the file *weights/weights.h5* and runs a test.
 
 To train the agent, set in the file snakeClass.py:
-- `params['load_weights'] = False`
 - `params['train'] = True`
 The parameters of the Deep neural network can be changed in *snakeClass.py* by modifying the dictionary `params` in the function `define_parameters()`
 
