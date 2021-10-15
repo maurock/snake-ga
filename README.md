@@ -50,8 +50,8 @@ This method uses Bayesian optimization to optimize some parameters of Deep RL. T
 It seems there is a OSX specific problem, since many users cannot see the game running.
 To fix this problem, in update_screen(), add this line.
 
-```                              
+```diff                            
 def update_screen():
-    pygame.display.update() <br>
-    pygame.event.get() # <--- Add this line ###
+    pygame.display.update()
++   pygame.event.get()
 ```
