@@ -13,7 +13,7 @@ mkl-fft==1.2.0
 mkl-random==1.1.1
 mkl-service==2.3.0
 msgpack-numpy==0.4.4.3
-numpy==1.18.1
+numpy==1.22.0
 olefile==0.46
 pandas==0.25.1
 paramz==0.9.5
