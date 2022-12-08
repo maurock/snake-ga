@@ -1,5 +1,5 @@
 absl-py==0.8.0
-certifi==2020.12.5
+certifi==2022.12.7
 cmake-example==0.0.1
 cycler==0.10.0
 dataclasses==0.8
